@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const logger = require('../utils/logger');
-const { addPredictionJob, predictionQueue } = require('../services/queueService');
+const { runPrediction } = require('../services/predictionService');
 
 exports.submitPrediction = async (req, res) => {
   const { query, overrides = {} } = req.body;
@@ -11,40 +11,10 @@ exports.submitPrediction = async (req, res) => {
   }
 
   try {
-    logger.info(`[${traceId}] Received prediction request -> queueing job with overrides: ${JSON.stringify(overrides)}`);
-    const jobId = await addPredictionJob({ query, traceId, overrides });
-    
-    res.json({ 
-      message: 'Job submitted successfully', 
-      jobId, 
-      traceId,
-      statusUrl: `/job-status/${jobId}` 
-    });
+    const result = await runPrediction({ query, traceId, overrides });
+    res.json({ message: 'Prediction completed successfully', traceId, result });
   } catch (error) {
-    logger.error(`[${traceId}] Failed to enqueue job`, error);
+    logger.error(`[${traceId}] Prediction failed`, error);
     res.status(500).json({ error: 'Failed to process request' });
-  }
-};
-
-exports.getJobStatus = async (req, res) => {
-  try {
-    const job = await predictionQueue.getJob(req.params.jobId);
-    if (!job) {
-      return res.status(404).json({ error: 'Job not found' });
-    }
-
-    const state = await job.getState();
-    const progress = job.progress;
-
-    if (state === 'completed') {
-      return res.json({ status: 'completed', result: job.returnvalue });
-    } else if (state === 'failed') {
-      return res.json({ status: 'failed', error: job.failedReason });
-    } else {
-      return res.json({ status: state, progress });
-    }
-  } catch (err) {
-    logger.error('Error checking status', err);
-    res.status(500).json({ error: 'Server error checking status' });
   }
 };

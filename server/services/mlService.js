@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
+const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8001';
 
 /**
  * Call the Python ML service for delay prediction
