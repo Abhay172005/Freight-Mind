@@ -5,73 +5,116 @@
 }
 
 body {
-  @apply bg-[#020617] text-slate-100 antialiased selection:bg-teal-500/30 selection:text-teal-200;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(20, 184, 166, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.03) 0px, transparent 50%);
+  @apply bg-[#f7f7f5] text-[#17212b] antialiased selection:bg-slate-900/15 selection:text-[#17212b];
+}
+
+/* Use a compact, laptop-friendly type scale at normal browser zoom. */
+html {
+  font-size: 16px;
+}
+
+@media (max-width: 640px) {
+  html {
+    font-size: 15px;
+  }
 }
 
 .glass-card {
-  @apply bg-slate-900/40 backdrop-blur-md border border-white/10 shadow-2xl;
+  @apply border border-white/10 bg-[#0b2431]/80 shadow-2xl backdrop-blur-md;
 }
 
 .glass-card-hover {
-  @apply transition-all duration-300 hover:bg-slate-800/60 hover:border-teal-500/30 hover:shadow-teal-500/5;
+  @apply transition-all duration-300 hover:border-orange-400/30 hover:bg-[#102d3d] hover:shadow-orange-500/5;
 }
 
 .text-glow-teal {
-  text-shadow: 0 0 15px rgba(45, 212, 191, 0.3);
+  text-shadow: 0 0 15px rgba(251, 146, 60, 0.35);
 }
 
 .glow-teal {
-  box-shadow: 0 0 20px -5px rgba(20, 184, 166, 0.3);
+  box-shadow: 0 0 20px -5px rgba(251, 146, 60, 0.35);
 }
 
-/* Base custom classes to match legacy map and scrolling */
+/* Freight-control-tower palette. Existing component utility names resolve to
+   cargo-orange and route-cyan so the app has one cohesive operational theme. */
+.text-teal-300, .text-teal-400, .text-cyan-300, .text-cyan-400 { color: #55d6cf !important; }
+.text-emerald-400 { color: #fb923c !important; }
+.bg-teal-400, .bg-teal-500 { background-color: #f97316 !important; }
+.bg-cyan-400 { background-color: #14b8a6 !important; }
+.bg-emerald-400 { background-color: #fb923c !important; }
+.border-teal-400\/20, .border-teal-500\/20, .border-teal-500\/30, .border-cyan-500\/20 { border-color: rgb(249 115 22 / 0.28) !important; }
+.ring-teal-400\/20, .ring-teal-500\/20 { --tw-ring-color: rgb(249 115 22 / 0.28) !important; }
+.ring-cyan-400\/20 { --tw-ring-color: rgb(20 184 166 / 0.28) !important; }
+.bg-teal-400\/10, .bg-teal-500\/10, .bg-teal-500\/5 { background-color: rgb(249 115 22 / 0.10) !important; }
+.bg-cyan-500\/10 { background-color: rgb(20 184 166 / 0.10) !important; }
+.bg-emerald-500\/10, .bg-emerald-500\/5 { background-color: rgb(249 115 22 / 0.10) !important; }
+.from-teal-400, .from-teal-500 { --tw-gradient-from: #f97316 var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(249 115 22 / 0) var(--tw-gradient-to-position) !important; }
+.via-emerald-400 { --tw-gradient-via: #f59e0b var(--tw-gradient-via-position) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to) !important; }
+.to-emerald-400, .to-emerald-500 { --tw-gradient-to: #fb923c var(--tw-gradient-to-position) !important; }
+.to-cyan-400 { --tw-gradient-to: #14b8a6 var(--tw-gradient-to-position) !important; }
+
+/* Minimal paper-and-ink workspace treatment. This scopes the application
+   dashboard and login to the same visual language as the landing page. */
+.freight-workspace,
+.freight-auth {
+  color: #17212b;
+  background: #f7f7f5;
+}
+
+.freight-workspace .glass-card,
+.freight-auth .glass-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 8px 24px rgb(15 23 42 / 0.05);
+}
+
+.freight-workspace .text-white,
+.freight-auth .text-white { color: #17212b !important; }
+.freight-workspace .text-slate-100,
+.freight-auth .text-slate-100,
+.freight-workspace .text-slate-200,
+.freight-auth .text-slate-200 { color: #334155 !important; }
+.freight-workspace .text-slate-300,
+.freight-auth .text-slate-300 { color: #475569 !important; }
+.freight-workspace .text-slate-400,
+.freight-auth .text-slate-400 { color: #64748b !important; }
+.freight-workspace .text-slate-500,
+.freight-auth .text-slate-500,
+.freight-workspace .text-slate-600,
+.freight-auth .text-slate-600 { color: #64748b !important; }
+
+.freight-workspace [class*="bg-slate-"],
+.freight-auth [class*="bg-slate-"],
+.freight-workspace [class*="bg-white/"],
+.freight-auth [class*="bg-white/"] { background-color: #ffffff !important; }
+.freight-workspace [class*="border-white"],
+.freight-auth [class*="border-white"] { border-color: #e2e8f0 !important; }
+.freight-workspace [class*="border-slate-"],
+.freight-auth [class*="border-slate-"] { border-color: #e2e8f0 !important; }
+
+.freight-workspace .bg-teal-500,
+.freight-workspace .bg-teal-400,
+.freight-auth .bg-teal-500,
+.freight-auth .bg-teal-400 { background-color: #17212b !important; }
+.freight-workspace .text-teal-400,
+.freight-workspace .text-teal-300,
+.freight-auth .text-teal-400,
+.freight-auth .text-teal-300 { color: #17212b !important; }
+.freight-workspace .bg-teal-500\/10,
+.freight-workspace .bg-teal-400\/10 { background-color: #f1f5f9 !important; }
+.freight-workspace .from-teal-500,
+.freight-workspace .from-teal-400 { --tw-gradient-from: #17212b var(--tw-gradient-from-position) !important; }
+.freight-workspace .to-emerald-500,
+.freight-workspace .to-emerald-400 { --tw-gradient-to: #475569 var(--tw-gradient-to-position) !important; }
+
+.freight-workspace input {
+  color: #17212b !important;
+  box-shadow: none;
+}
+.freight-workspace input::placeholder { color: #94a3b8 !important; }
+
+/* Compact scrollbar treatment */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { @apply bg-slate-800 rounded-md; }
 ::-webkit-scrollbar-thumb:hover { @apply bg-slate-700; }
-
-/* Custom Leaflet Overrides for Dark Mode */
-.leaflet-container {
-  background: transparent !important;
-}
-
-.leaflet-popup-content-wrapper,
-.leaflet-popup-tip {
-  @apply bg-[#0f172a] text-slate-100 border border-slate-700/50 shadow-2xl rounded-xl;
-}
-
-.leaflet-popup-content-wrapper {
-  background-color: #0f172a !important;
-  color: #f1f5f9 !important;
-  backdrop-filter: blur(10px) !important;
-}
-
-.leaflet-popup-content {
-  @apply mx-4 my-3 font-sans text-sm;
-}
-
-.leaflet-popup-content strong {
-  @apply text-teal-400 font-semibold;
-  color: #2dd4bf !important;
-}
-
-.pulsing-radius {
-  animation: radar-pulse 4s infinite alternate ease-in-out;
-}
-
-@keyframes radar-pulse {
-  0% { fill-opacity: 0.05; stroke-opacity: 0.1; }
-  100% { fill-opacity: 0.2; stroke-opacity: 0.6; }
-}
-
-.animated-path {
-  stroke-dasharray: 8, 12;
-  animation: dash-flow 25s linear infinite forwards;
-}
-
-@keyframes dash-flow {
-  to { stroke-dashoffset: -1000; }
-}

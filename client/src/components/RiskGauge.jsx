@@ -1,91 +1,19 @@
-import { useRef } from 'react';
+const statusFor = (score) => {
+  if (score <= 30) return 'Low risk';
+  if (score <= 60) return 'Moderate risk';
+  if (score <= 80) return 'High risk';
+  return 'Critical risk';
+};
 
-export default function RiskGauge({ score, delayDays, category }) {
-  const gaugeRef = useRef(null);
-
-  const getColor = (s) => {
-    if (s <= 30) return '#2dd4bf'; // teal-400 (Vibrant)
-    if (s <= 60) return '#fbbf24'; // amber-400
-    if (s <= 80) return '#fb923c'; // orange-400
-    return '#f87171'; // red-400
-  };
-
-  const getLabel = (s) => {
-    if (s <= 30) return 'LOW RISK';
-    if (s <= 60) return 'MODERATE';
-    if (s <= 80) return 'HIGH RISK';
-    return 'CRITICAL';
-  };
-
-  const color = getColor(score);
-  const circumference = 2 * Math.PI * 70;
-  const dashOffset = circumference - (score / 100) * circumference * 0.75;
-
+export default function RiskGauge({ score = 0, delayDays = 0, category }) {
+  const roundedScore = Math.round(score);
+  const arrival = delayDays <= 0 ? `${Math.abs(delayDays).toFixed(1)} days early` : `${delayDays.toFixed(1)} days late`;
   return (
-    <div className="flex flex-col items-center justify-center w-full relative" ref={gaugeRef}>
-      <h4 className="absolute top-0 left-0 text-[10px] font-black tracking-[0.2em] text-slate-500 uppercase">Operational Risk</h4>
-      
-      <div className="relative mt-8">
-        <svg viewBox="0 0 180 160" className="w-full max-w-[200px] transition-all duration-1000 ease-out">
-          <defs>
-            <filter id="glow-gauge">
-              <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-              <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-          
-          {/* Background arc */}
-          <circle
-            cx="90" cy="90" r="70"
-            fill="none"
-            stroke="#1e293b"
-            strokeWidth="10"
-            strokeDasharray={`${circumference * 0.75} ${circumference * 0.25}`}
-            strokeDashoffset={0}
-            strokeLinecap="round"
-            transform="rotate(135 90 90)"
-          />
-          {/* Value arc */}
-          <circle
-            cx="90" cy="90" r="70"
-            fill="none"
-            stroke={color}
-            strokeWidth="10"
-            strokeDasharray={`${circumference * 0.75} ${circumference * 0.25}`}
-            strokeDashoffset={dashOffset}
-            strokeLinecap="round"
-            transform="rotate(135 90 90)"
-            className="transition-all duration-1000 ease-in-out"
-            filter="url(#glow-gauge)"
-          />
-          {/* Score text */}
-          <text x="90" y="78" textAnchor="middle" className="text-5xl font-black font-sans tracking-tight" fill="white">
-            {Math.round(score)}
-          </text>
-          <text x="90" y="102" textAnchor="middle" className="text-[10px] font-black tracking-[0.2em] font-sans" fill={color}>
-            {getLabel(score)}
-          </text>
-          <text x="90" y="122" textAnchor="middle" className="text-[10px] font-bold font-sans" fill="#475569">
-            /100 Index
-          </text>
-        </svg>
-      </div>
-      
-      <div className="flex w-full justify-between items-center mt-6 border-t border-white/5 pt-6">
-        <div className="flex flex-col items-start gap-1">
-          <span className="text-lg font-black tracking-tight" style={{ color: delayDays > 0 ? '#fb923c' : '#2dd4bf' }}>
-            {delayDays > 0 ? '+' : ''}{delayDays} Days
-          </span>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Delay Delta</span>
-        </div>
-        <div className="flex flex-col items-end gap-1 text-right">
-          <span className="text-lg font-black tracking-tight text-white capitalize">{category}</span>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Fleet Status</span>
-        </div>
-      </div>
+    <div>
+      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Route risk</p>
+      <div className="mt-4 flex items-end justify-between gap-3"><div><span className="text-4xl font-semibold tracking-[-0.06em] text-[#17212b]">{roundedScore}</span><span className="ml-1 text-xs text-slate-500">/100</span></div><span className="mb-1 text-xs font-medium text-slate-600">{statusFor(score)}</span></div>
+      <div className="mt-4 h-1.5 bg-slate-100"><div className="h-full bg-[#17212b]" style={{ width: `${Math.min(100, Math.max(4, roundedScore))}%` }} /></div>
+      <div className="mt-4 border-t border-slate-100 pt-3"><p className="text-xs font-medium text-[#17212b]">{arrival}</p><p className="mt-1 text-[10px] text-slate-500">{category || 'Projected arrival status'}</p></div>
     </div>
   );
 }

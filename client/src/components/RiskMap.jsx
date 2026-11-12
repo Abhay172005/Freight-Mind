@@ -1,140 +1,63 @@
-import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import { useEffect, useRef } from 'react';
+import { Map, Marker, NavigationControl, Popup, setWorkerUrl } from 'maplibre-gl';
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
-// Fix Vite leaflet icon paths
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-});
+setWorkerUrl(workerUrl);
 
-const getRiskIconUrl = (color) => `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`;
-
-const createIcon = (color) => new L.Icon({
-  iconUrl: getRiskIconUrl(color),
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
-
-const icons = {
-  high: createIcon('red'),
-  medium: createIcon('orange'),
-  low: createIcon('green')
+const makePin = (colour) => {
+  const pin = document.createElement('span');
+  pin.style.cssText = `display:block;width:12px;height:12px;border:3px solid white;border-radius:999px;background:${colour};box-shadow:0 0 0 1px rgba(15,23,42,.25)`;
+  return pin;
 };
 
-export default function RiskMap({ originName, originCoords, destinationName, destinationCoords, riskScore, weather, alternativeRoutes }) {
-  const destCoords = destinationCoords || [51.9482, 4.0623];
-  const startCoords = originCoords || [1.3521, 103.8198];
+export default function RiskMap({ originName, originCoords, destinationName, destinationCoords, riskScore = 0 }) {
+  const origin = originCoords || [1.3521, 103.8198];
+  const destination = destinationCoords || [51.9482, 4.0623];
+  const [originLat, originLng] = origin;
+  const [destinationLat, destinationLng] = destination;
+  const mapContainer = useRef(null);
+  const riskColour = riskScore > 70 ? '#dc2626' : riskScore > 40 ? '#d97706' : '#17212b';
 
-  const generateCurve = (start, end) => {
-    const points = [];
-    const midLat = (start[0] + end[0]) / 2 + 10;
-    const midLng = (start[1] + end[1]) / 2;
-    for (let t = 0; t <= 1; t += 0.05) {
-      const lat = Math.pow(1 - t, 2) * start[0] + 2 * (1 - t) * t * midLat + Math.pow(t, 2) * end[0];
-      const lng = Math.pow(1 - t, 2) * start[1] + 2 * (1 - t) * t * midLng + Math.pow(t, 2) * end[1];
-      points.push([lat, lng]);
-    }
-    return points;
-  };
-  
-  const riskLevel = riskScore >= 70 ? 'high' : riskScore >= 40 ? 'medium' : 'low';
-  const pathColor = riskLevel === 'high' ? '#EF4444' : riskLevel === 'medium' ? '#F97316' : '#14B8A6';
-  
-  const mapCenter = originCoords ? null : destCoords;
-  const mapBounds = originCoords ? [originCoords, destCoords] : null;
+  useEffect(() => {
+    if (!mapContainer.current) return undefined;
+    const map = new Map({
+      container: mapContainer.current,
+      style: 'https://tiles.openfreemap.org/styles/liberty',
+      center: [(originLng + destinationLng) / 2, (originLat + destinationLat) / 2],
+      zoom: 2,
+      attributionControl: true,
+    });
+    map.addControl(new NavigationControl({ showCompass: false }), 'top-right');
+
+    map.on('load', () => {
+      map.addSource('shipment-route', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'LineString',
+            coordinates: [[originLng, originLat], [(originLng + destinationLng) / 2, (originLat + destinationLat) / 2 + 7], [destinationLng, destinationLat]],
+          },
+        },
+      });
+      map.addLayer({
+        id: 'shipment-route', type: 'line', source: 'shipment-route',
+        paint: { 'line-color': riskColour, 'line-width': 3, 'line-opacity': 0.8, 'line-dasharray': [2, 2] },
+      });
+      new Marker({ element: makePin('#17212b'), anchor: 'center' }).setLngLat([originLng, originLat]).setPopup(new Popup({ offset: 12 }).setText(originName || 'Origin')).addTo(map);
+      new Marker({ element: makePin(riskColour), anchor: 'center' }).setLngLat([destinationLng, destinationLat]).setPopup(new Popup({ offset: 12 }).setText(destinationName || 'Destination')).addTo(map);
+      map.fitBounds([[originLng, originLat], [destinationLng, destinationLat]], { padding: { top: 52, right: 52, bottom: 52, left: 52 }, maxZoom: 3, duration: 0 });
+    });
+    return () => map.remove();
+  }, [originLat, originLng, destinationLat, destinationLng, originName, destinationName, riskColour]);
 
   return (
-    <div className="relative h-[400px] w-full overflow-hidden rounded-2xl">
-      <div className="absolute inset-0 z-0">
-        <MapContainer 
-          {...(mapBounds ? { bounds: mapBounds } : { center: mapCenter, zoom: 6 })}
-          scrollWheelZoom={false}
-          style={{ height: '100%', width: '100%', background: '#0F172A' }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://carto.com/">CartoDB</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          />
-          <TileLayer
-            url="https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=6919c20a3dbd182173a492be7cbd0ae0"
-            opacity={0.5}
-          />
-          <TileLayer
-            url="https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=6919c20a3dbd182173a492be7cbd0ae0"
-            opacity={0.6}
-          />
-          
-          <Circle 
-            center={destCoords} 
-            radius={riskScore * 5000}
-            pathOptions={{ color: pathColor, fillColor: pathColor, className: 'pulsing-radius' }}
-          />
-          
-          <Marker position={startCoords} icon={icons.low}>
-            <Popup>
-              <strong>{originName || 'Origin Hub'}</strong><br />
-              Dispatch Facility
-            </Popup>
-          </Marker>
-
-          <Marker position={destCoords} icon={icons[riskLevel]}>
-            <Popup>
-              <strong>{destinationName || 'Destination Hub'}</strong><br />
-              Status: {riskLevel === 'high' ? 'Heavy Congestion' : 'Open'}<br />
-              Risk Level: {riskScore}/100<br />
-              Weather: {weather?.description || 'Unknown'}
-            </Popup>
-          </Marker>
-
-          <Polyline 
-            positions={generateCurve(startCoords, destCoords)} 
-            color={pathColor}
-            weight={4}
-            opacity={0.8}
-            className="animated-path"
-          />
-
-           {alternativeRoutes && alternativeRoutes.length > 0 && (
-             <>
-               <Marker position={[destCoords[0] + 2, destCoords[1] + 2]} icon={icons.low}>
-                 <Popup>
-                   <strong>Alternate Route ({alternativeRoutes[0].mode})</strong><br/>
-                   Reason: {alternativeRoutes[0].reason}
-                 </Popup>
-               </Marker>
-               <Polyline 
-                 positions={[[destCoords[0] + 2, destCoords[1] + 2], destCoords]} 
-                 color="#14B8A6" 
-                 weight={4}
-                 className="animated-path"
-               />
-             </>
-           )}
-        </MapContainer>
-
-        <div className="pointer-events-none absolute right-4 top-4 z-[400] flex flex-col gap-3 rounded-xl border border-slate-700/50 bg-slate-900/80 p-4 shadow-xl backdrop-blur-md">
-          <div className="flex justify-between gap-6 text-sm">
-            <span className="font-semibold uppercase tracking-wider text-slate-500 text-[10px]">Journey</span>
-            <span className="font-medium text-slate-200">{(originName || 'ORG').slice(0,3).toUpperCase()} ➝ {(destinationName || 'DST').slice(0,3).toUpperCase()}</span>
-          </div>
-          <div className="flex justify-between gap-6 text-sm border-t border-slate-700/50 pt-2">
-            <span className="font-semibold uppercase tracking-wider text-slate-500 text-[10px]">Risk Profile</span>
-            <span className="font-bold" style={{ color: pathColor }}>{riskScore}/100</span>
-          </div>
-        </div>
-
-        <div className="absolute bottom-4 left-4 z-[400] flex items-center gap-3 rounded-full border border-slate-700/50 bg-slate-900/80 px-4 py-2 shadow-lg backdrop-blur-md">
-          <div className={`h-2.5 w-2.5 rounded-full animate-pulse ${riskLevel === 'high' ? 'bg-red-500' : riskLevel === 'medium' ? 'bg-orange-500' : 'bg-teal-500'}`} />
-          <span className="text-[11px] font-semibold tracking-wider text-slate-300 uppercase">Live Geospatial Monitoring</span>
-        </div>
-      </div>
-    </div>
+    <section className="relative h-[300px] w-full overflow-hidden bg-slate-100 sm:h-[360px]">
+      <div ref={mapContainer} className="h-full w-full" />
+      <div className="pointer-events-none absolute left-4 top-4 border border-slate-200 bg-white/95 px-3 py-2 shadow-sm"><p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">Route overview</p><p className="mt-1 text-xs font-medium text-[#17212b]">{originName || 'Origin'} <span className="text-slate-400">to</span> {destinationName || 'Destination'}</p></div>
+      <div className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-2 border border-slate-200 bg-white/95 px-3 py-2 text-[11px] text-slate-600"><span className="h-2 w-2 rounded-full" style={{ background: riskColour }} /> Risk score {Math.round(riskScore)}/100</div>
+    </section>
   );
 }

@@ -4,6 +4,7 @@ import { supabase } from './services/supabaseClient';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
 import './index.css';
 
 // PrivateRoute checks Supabase session
@@ -58,6 +59,11 @@ function App() {
         <Route path="/login" element={
           <GuestRoute session={session}>
             <Login />
+          </GuestRoute>
+        } />
+        <Route path="/signup" element={
+          <GuestRoute session={session}>
+            <Signup />
           </GuestRoute>
         } />
         <Route path="/dashboard" element={

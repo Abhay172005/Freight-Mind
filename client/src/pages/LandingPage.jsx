@@ -1,152 +1,43 @@
+import { ArrowRight, BarChart3, CloudSun, Navigation, Route, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Shield, Zap, Globe, ArrowRight } from 'lucide-react';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#020617] font-sans text-slate-100 selection:bg-teal-500/30">
-      
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-white/5 bg-[#020617]/70 px-6 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold tracking-tighter text-white">
-            <span className="bg-gradient-to-tr from-teal-400 to-emerald-500 bg-clip-text text-transparent">Freight Mind</span>
-          </Link>
-          <div className="flex items-center gap-8">
-            <Link 
-              to="/login" 
-              className="group relative overflow-hidden rounded-full bg-teal-500 px-6 py-2 text-sm font-bold text-slate-950 transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(20,184,166,0.5)]"
-            >
-              Get Started
-            </Link>
-          </div>
-        </div>
-      </nav>
+    <main className="bg-[#f7f7f5] px-5 text-[#17212b] sm:px-8">
+      <section className="mx-auto flex min-h-screen max-w-6xl flex-col py-6 sm:py-8">
+        <header className="flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2 text-sm font-semibold tracking-tight text-[#17212b]"><span className="grid h-8 w-8 place-items-center rounded-full bg-[#17212b] text-white"><Navigation className="h-4 w-4" /></span>Freight Mind</Link>
+          <Link to="/login" className="text-xs font-semibold text-slate-600 transition hover:text-[#17212b]">Sign in</Link>
+        </header>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden px-6 pt-32 pb-24 lg:pt-48 lg:pb-40">
-        <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
-          <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#14b8a6] to-[#0ea5e9] opacity-10 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"></div>
+        <div className="grid flex-1 items-center gap-12 py-16 lg:grid-cols-[1fr_360px]">
+          <div>
+            <p className="mb-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Predictive logistics intelligence</p>
+            <h1 className="max-w-4xl text-5xl font-semibold leading-[1.02] tracking-[-0.055em] text-[#17212b] sm:text-6xl lg:text-7xl">See delay risk<br />before the delay.</h1>
+            <p className="mt-7 max-w-xl text-base leading-7 text-slate-600">Freight Mind helps logistics teams assess shipment risk, understand the cause, and decide the next best move with confidence.</p>
+            <div className="mt-9 flex flex-wrap items-center gap-4"><Link to="/dashboard" className="inline-flex items-center gap-2 rounded-md bg-[#17212b] px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700">Analyse a shipment <ArrowRight className="h-4 w-4" /></Link><span className="text-xs text-slate-500">ML prediction · route context · mitigation guidance</span></div>
+          </div>
+
+          <aside className="overflow-hidden bg-[#17212b] text-white shadow-xl shadow-slate-300/60 lg:-translate-x-8">
+            <div className="flex items-center justify-between border-b border-white/10 px-6 py-5"><div><p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">Route intelligence</p><p className="mt-1 text-sm font-medium text-white">Shipment decision brief</p></div><Route className="h-5 w-5 text-slate-400" /></div>
+            <div className="relative px-6 py-8"><svg viewBox="0 0 320 150" className="h-auto w-full" aria-label="Example shipping route"><path d="M25 120 C105 12, 210 22, 295 55" fill="none" stroke="rgba(255,255,255,.22)" strokeDasharray="4 6" strokeWidth="1.5" /><path d="M25 120 C105 12, 210 22, 295 55" fill="none" stroke="white" strokeWidth="2" /><circle cx="25" cy="120" r="5" fill="#fff" /><circle cx="295" cy="55" r="5" fill="#94a3b8" /><circle cx="161" cy="39" r="3" fill="#fff" /></svg><div className="mt-3 flex justify-between text-xs"><div><p className="font-medium text-white">Singapore</p><p className="mt-1 text-slate-400">Origin port</p></div><div className="text-right"><p className="font-medium text-white">Rotterdam</p><p className="mt-1 text-slate-400">Destination port</p></div></div></div>
+            <div className="grid grid-cols-2 border-t border-white/10"><div className="p-5"><p className="text-[10px] uppercase tracking-wider text-slate-400">Forecast</p><p className="mt-2 text-xl font-semibold tracking-tight">Delay risk</p></div><div className="border-l border-white/10 p-5"><p className="text-[10px] uppercase tracking-wider text-slate-400">Decision</p><p className="mt-2 text-xl font-semibold tracking-tight">Next move</p></div></div>
+          </aside>
         </div>
-        
-        <div className="mx-auto max-w-7xl text-center">
-          <div className="mx-auto mb-8 flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full border border-teal-500/20 bg-teal-500/10 px-4 py-1.5 backdrop-blur-md">
-            <p className="text-xs font-bold tracking-widest text-teal-400 uppercase">
-              AI-Powered Logistics Intelligence
-            </p>
-          </div>
-          <h1 className="mb-8 text-6xl font-black tracking-tight text-white sm:text-7xl lg:text-8xl">
-            Predict Delays<br />
-            <span className="bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">Before They Happen</span>
-          </h1>
-          <p className="mx-auto mb-12 max-w-2xl text-lg text-slate-400 font-medium leading-relaxed">
-            Enterprise risk intelligence with proactive mitigation strategies.
-            Powered by models trained on 180,000+ supply chain records.
-          </p>
-          <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
-            <Link 
-              to="/dashboard" 
-              className="flex items-center gap-2 rounded-full bg-teal-500 px-10 py-4 text-base font-bold text-slate-950 transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(20,184,166,0.4)]"
-            >
-              Start Prediction <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link 
-              to="/dashboard" 
-              className="rounded-full border border-white/10 bg-white/5 px-10 py-4 text-base font-bold text-white transition-all backdrop-blur-md hover:bg-white/10 hover:border-white/20"
-            >
-              View Dashboard
-            </Link>
-          </div>
+
+        <footer className="flex flex-col gap-2 border-t border-slate-200 pt-5 text-[11px] text-slate-500 sm:flex-row sm:items-center sm:justify-between"><span>Freight Mind — operational decision support for supply chains.</span><span>v1.2</span></footer>
+      </section>
+
+      <section className="mx-auto max-w-6xl border-t border-slate-200 py-20 sm:py-28">
+        <div className="max-w-2xl"><p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">From signal to decision</p><h2 className="mt-4 text-3xl font-semibold tracking-[-0.045em] sm:text-4xl">One clear brief for every shipment.</h2><p className="mt-5 text-base leading-7 text-slate-600">Start with the route. Freight Mind brings the model forecast, live conditions, and practical response into one focused view.</p></div>
+        <div className="mt-12 grid border-y border-slate-200 md:grid-cols-3">
+          <article className="border-slate-200 py-8 md:border-r md:pr-8"><BarChart3 className="h-5 w-5 text-slate-500" /><p className="mt-8 text-sm font-semibold">Forecast the outcome</p><p className="mt-3 max-w-xs text-sm leading-6 text-slate-600">A delivery-risk score, expected delay, and the factors that meaningfully changed it.</p></article>
+          <article className="border-t border-slate-200 py-8 md:border-r md:border-t-0 md:px-8"><CloudSun className="h-5 w-5 text-slate-500" /><p className="mt-8 text-sm font-semibold">Read the conditions</p><p className="mt-3 max-w-xs text-sm leading-6 text-slate-600">Weather and news signals are attached to the destination so the context is never abstract.</p></article>
+          <article className="border-t border-slate-200 py-8 md:border-t-0 md:pl-8"><ShieldCheck className="h-5 w-5 text-slate-500" /><p className="mt-8 text-sm font-semibold">Choose the response</p><p className="mt-3 max-w-xs text-sm leading-6 text-slate-600">Compare options, estimate the exposure, and leave with a concrete mitigation plan.</p></article>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="px-6 py-32 bg-[#020617] relative">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-20 text-center">
-            <h2 className="text-4xl font-black tracking-tight text-white sm:text-5xl">Core Capabilities</h2>
-            <p className="mt-4 text-slate-400">Advanced AI monitoring for the modern supply chain.</p>
-          </div>
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-            
-            <div className="glass-card glass-card-hover rounded-3xl p-10">
-              <div className="mb-8 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-500/10 text-teal-400 ring-1 ring-teal-500/20">
-                <Zap className="h-7 w-7" />
-              </div>
-              <h3 className="mb-4 text-2xl font-bold text-white">Predict Delays</h3>
-              <p className="text-slate-400 leading-relaxed font-medium">
-                Dual-model ensemble (RF + XGBoost) with SHAP explainability predicts delay probability and duration in real-time.
-              </p>
-            </div>
-
-            <div className="glass-card glass-card-hover rounded-3xl p-10">
-              <div className="mb-8 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-400 ring-1 ring-cyan-500/20">
-                <Globe className="h-7 w-7" />
-              </div>
-              <h3 className="mb-4 text-2xl font-bold text-white">Geospatial Intelligence</h3>
-              <p className="text-slate-400 leading-relaxed font-medium">
-                Interactive geospatial mapping with live weather radar overlays and port-level risk heatmaps.
-              </p>
-            </div>
-
-            <div className="glass-card glass-card-hover rounded-3xl p-10">
-              <div className="mb-8 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-400 ring-1 ring-indigo-500/20">
-                <Shield className="h-7 w-7" />
-              </div>
-              <h3 className="mb-4 text-2xl font-bold text-white">Risk Mitigation</h3>
-              <p className="text-slate-400 leading-relaxed font-medium">
-                Multi-modal transport optimization compares Air, Sea, and Rail to select the safest and most efficient delivery path.
-              </p>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* Architecture Section */}
-      <section id="architecture" className="px-6 py-32 border-t border-white/5 relative overflow-hidden">
-        <div className="absolute top-0 right-0 -z-10 h-full w-full opacity-10">
-           <div className="absolute top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-teal-500 blur-[120px]"></div>
-        </div>
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-20 text-center">
-            <h2 className="text-4xl font-black tracking-tight text-white sm:text-5xl">System Architecture</h2>
-          </div>
-          <div className="grid gap-16 lg:grid-cols-3">
-            
-            <div className="text-center group">
-              <span className="mb-6 block text-7xl font-black text-white/5 transition-colors group-hover:text-teal-500/10">01</span>
-              <h4 className="mb-4 text-xl font-bold text-white">Event-Driven Pipeline</h4>
-              <p className="text-slate-500 font-medium leading-relaxed">Redis-backed job queue with isolated worker processes for high-throughput prediction execution.</p>
-            </div>
-            
-            <div className="text-center group">
-              <span className="mb-6 block text-7xl font-black text-white/5 transition-colors group-hover:text-teal-500/10">02</span>
-              <h4 className="mb-4 text-xl font-bold text-white">Explainable AI</h4>
-              <p className="text-slate-500 font-medium leading-relaxed">SHAP-powered feature attribution reveals the specific parameters driving each risk prediction.</p>
-            </div>
-            
-            <div className="text-center group">
-              <span className="mb-6 block text-7xl font-black text-white/5 transition-colors group-hover:text-teal-500/10">03</span>
-              <h4 className="mb-4 text-xl font-bold text-white">Prescriptive Engine</h4>
-              <p className="text-slate-500 font-medium leading-relaxed">Evaluation engine calculates multi-modal alternatives and recommends optimal delivery paths.</p>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-white/5 bg-[#020617] py-12">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-6 sm:flex-row">
-          <p className="text-lg font-black tracking-tighter text-white">
-            <span className="bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">Freight Mind</span>
-          </p>
-          <div className="flex gap-10 text-sm font-medium text-slate-500">
-             <span>v1.2.0</span>
-             <span>Enterprise AI</span>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <section className="mx-auto max-w-6xl pb-20 sm:pb-28"><div className="flex flex-col gap-8 border border-slate-200 bg-white p-7 sm:flex-row sm:items-end sm:justify-between sm:p-10"><div><p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Ready when the route is</p><h2 className="mt-4 max-w-xl text-2xl font-semibold tracking-[-0.04em] sm:text-3xl">Turn a shipment update into an informed next move.</h2></div><Link to="/dashboard" className="inline-flex shrink-0 items-center gap-2 self-start rounded-md bg-[#17212b] px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700 sm:self-auto">Open dashboard <ArrowRight className="h-4 w-4" /></Link></div></section>
+    </main>
   );
 }

@@ -1,66 +1,15 @@
-import { Newspaper, AlertTriangle, CheckCircle2, Info, ArrowUpRight } from 'lucide-react';
+import { Empty } from './ShapChart';
+
+const signalType = (sentiment) => sentiment === 'negative' ? 'Disruption' : sentiment === 'positive' ? 'Positive signal' : 'Monitor';
 
 export default function NewsPanel({ news }) {
-  if (!news || news.length === 0) {
-    return (
-      <div className="glass-card rounded-[2.5rem] p-16 text-center animate-in fade-in duration-700">
-        <Newspaper className="mx-auto h-12 w-12 text-slate-700 mb-4 opacity-50" />
-        <p className="text-sm font-black uppercase tracking-widest text-slate-600">No Intelligence Ingested</p>
-      </div>
-    );
-  }
-
-  const getSentimentConfig = (sentiment) => {
-    switch (sentiment?.toLowerCase()) {
-      case 'negative': 
-        return { icon: <AlertTriangle className="h-3 w-3" />, color: 'bg-red-500/10 text-red-400 border border-red-500/20', label: 'Critical Alert' };
-      case 'positive': 
-        return { icon: <CheckCircle2 className="h-3 w-3" />, color: 'bg-teal-500/10 text-teal-400 border border-teal-500/20', label: 'Optimistic' };
-      default: 
-        return { icon: <Info className="h-3 w-3" />, color: 'bg-blue-500/10 text-blue-400 border border-blue-500/20', label: 'Neutral' };
-    }
-  };
-
+  if (!news?.length) return <Empty message="No external logistics signals were returned for this assessment." />;
   return (
-    <div className="glass-card rounded-[2.5rem] p-10 shadow-3xl animate-in fade-in slide-in-from-right-4 duration-500">
-      <div className="mb-10 flex items-center justify-between border-b border-white/5 pb-8">
-        <div>
-          <h3 className="flex items-center gap-3 text-2xl font-black text-white tracking-tight">
-            Logistics Intelligence <Newspaper className="h-6 w-6 text-teal-400" />
-          </h3>
-          <p className="text-sm font-medium text-slate-500 mt-1">Real-time signal aggregation from global supply chain feeds.</p>
-        </div>
+    <section className="border border-slate-200 bg-white">
+      <header className="border-b border-slate-200 px-5 py-4"><p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">External context</p><h3 className="mt-1 text-sm font-semibold text-[#17212b]">Signals affecting this route</h3></header>
+      <div className="divide-y divide-slate-100">
+        {news.map((item, index) => <article key={`${item.title}-${index}`} className="grid gap-3 px-5 py-5 sm:grid-cols-[120px_1fr]"><div><span className="text-[10px] font-medium text-slate-500">{signalType(item.sentiment)}</span><p className="mt-1 text-[10px] text-slate-400">{item.source || 'Source unavailable'}</p></div><div><h4 className="text-sm font-medium text-[#17212b]">{item.title}</h4>{item.description && <p className="mt-1 text-xs leading-5 text-slate-600">{item.description}</p>}</div></article>)}
       </div>
-      
-      <div className="grid gap-6 md:grid-cols-2">
-        {news.map((item, i) => {
-          const sentiment = getSentimentConfig(item.sentiment);
-          return (
-            <div 
-              key={i} 
-              className="group relative flex flex-col gap-4 rounded-[2rem] border border-white/5 bg-white/5 p-8 transition-all hover:bg-white/[0.08] hover:border-white/10"
-            >
-              <div className="flex items-center justify-between">
-                <span className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-[9px] font-black uppercase tracking-widest ${sentiment.color}`}>
-                  {sentiment.icon} {sentiment.label}
-                </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-black tracking-widest text-slate-500 uppercase">{item.source}</span>
-                  <ArrowUpRight className="h-3 w-3 text-slate-700 transition-colors group-hover:text-teal-500" />
-                </div>
-              </div>
-              <h4 className="text-lg font-black leading-tight text-white group-hover:text-teal-400 transition-colors">
-                {item.title}
-              </h4>
-              {item.description && (
-                <p className="text-sm font-medium leading-relaxed text-slate-500 line-clamp-3">
-                  {item.description}
-                </p>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    </section>
   );
 }
