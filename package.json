@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Freight Mind AI Logistics Agent",
   "scripts": {
-    "dev": "docker compose up --build",
-    "stop": "docker compose down",
-    "clean": "docker compose down -v && docker system prune -f"
+    "server": "node server/index.js",
+    "client": "npm --prefix client run dev",
+    "ml": "ml-service\\venv\\Scripts\\python.exe ml-service\\app.py"
   },
   "author": "Hackathon Team",
   "license": "ISC"
