@@ -1,85 +1,124 @@
-# Freight Mind ⚡
+# Freight Mind
 
-**Freight Mind** is an AI-powered Predictive Delay & Risk Intelligence Agent for modern logistics and supply chain optimization. Designed natively as an event-driven microservices architecture, it predicts shipment delays, models financial risk, and provides generative mitigation strategies.
+### Predictive delay intelligence for modern logistics
 
-## Problem Statement
-In the logistics and freight industry, unseen delays (caused by port congestion, extreme weather, and global events) cause sweeping downstream disruptions and ballooning costs. Predictability is hard because it requires synthesizing historic delivery metrics simultaneously with live external events.
+Freight Mind helps logistics teams identify shipment delay risk before it becomes a costly operational problem. Describe a shipment in plain language and receive a focused decision brief: predicted delay, risk drivers, live conditions, financial exposure, and recommended next steps.
 
-**Freight Mind solves this by:**
-1. Using an Event-Driven architecture to absorb heavy processing logic securely in the background.
-2. Applying multi-modal Machine Learning (Random Forest & XGBoost) on historical logistics data.
-3. Supplying Explainable AI (SHAP) so stakeholders understand exactly *why* a delay is flagged.
-4. Implementing a LLM Generative Agent to output actionable mitigation steps to resolve the delay before it compounds.
+![Freight Mind landing page](./image.png)
 
----
+## The challenge
 
-## Architecture Overview
+Shipment delays rarely have a single cause. Port congestion, weather disruption, route conditions, and market volatility can combine quickly, leaving teams to react after the impact is already visible.
 
-**Freight Mind** uses a scalable, distributed pattern to ensure heavy ML inference and LLM token generation don't block the backend application.
+Freight Mind turns those fragmented signals into a single, understandable risk assessment so teams can act earlier and with more confidence.
 
-![Architecture Flow Placeholder](#)
+## What Freight Mind delivers
 
-### System Flow Diagram
-1. **User Input**: A user inputs a natural language query in the React Dashboard via JWT-secured API points.
-2. **Event Queue**: Express.js catches the request at `POST /predict-risk`, generates a unique `Trace ID` for observability, drops it immediately into **Redis** via BullMQ, and returns a JobID to the user.
-3. **Background Worker Processing**:
-   - Parses the query using Llama 4.
-   - Reaches out to real-time APIs (OpenWeatherMap & NewsAPI).
-   - Sends payload to the independent Python FastAPI Microservice for ML Inference.
-   - Pings LLM for generating final mitigation text.
-   - Consolidates and stores the payload in **PostgreSQL (Supabase)**.
-4. **Data Security**: Before hitting the database, sensitive PII extracted from the user is injected into an AES-256 cipher mechanism and stored purely encrypted at rest.
-5. **Real-time UX**: The Frontend polls `GET /job-status/:jobId` continuously to provide progressive feedback to the user on the asynchronous tasks.
-6. **Observability**: Live metrics are sent to internal logs which format and ship directly to **Loki + Grafana** for centralized request tracing across the worker queue and Express backend.
+- **Delay-risk forecasting** - Estimates the likelihood and expected duration of shipment delays using Random Forest and XGBoost models.
+- **Explainable predictions** - Highlights the most influential factors with SHAP-based model explanations.
+- **Live route context** - Incorporates destination weather and relevant logistics signals into each assessment.
+- **Financial exposure** - Estimates holding cost, penalties, and revenue at risk.
+- **Actionable mitigation** - Produces clear next steps and compares transportation alternatives.
+- **Route visualization** - Shows the shipment route on an interactive OpenFreeMap map.
 
----
+## How it works
 
-## Tech Stack
+```text
+Shipment query
+      v
+Express API -> Weather and news signals
+      v
+FastAPI ML service -> Delay forecast and SHAP factors
+      v
+AI assessment -> Mitigations and mode comparison
+      v
+Freight Mind dashboard
+```
 
-This framework successfully fulfills Hackathon Evaluation specifications (Mandatory & Advantage levels).
+1. The user enters a shipment description, such as: `Electronics from Shanghai to Rotterdam, ETA 14 days.`
+2. Freight Mind extracts route and shipment context, then collects relevant external signals.
+3. The ML service returns a delay forecast, risk score, and explainable contributing factors.
+4. The platform generates an operational brief with financial impact and recommended response options.
 
-| Category | Technologies Used |
-| :--- | :--- |
-| **Frontend** | React, Vite |
-| **Backend API** | Node.js, Express.js |
-| **Queue / Scale** | Redis, BullMQ (Event-Driven Workers) |
-| **Database** | PostgreSQL (Supabase) |
-| **Security** | Supabase Auth (JWT), AES-256 (Node Crypto), MFA OTP Simulation |
-| **ML Service** | Python, FastAPI, XGBoost/RandomForest, SHAP Explainer |
-| **AI Agent Layer** | OpenAI API (gpt-4o-mini) |
-| **Observability** | Winston, Grafana, Loki Stack |
-| **DevOps** | Docker, Docker Compose (Internal Network & Discoverability) |
+## Product experience
 
----
+The dashboard gives operators one place to understand a shipment:
 
-## How to Run
+- Risk score and predicted delay
+- Financial impact breakdown
+- Destination weather and logistics signals
+- Interactive origin-to-destination route map
+- Risk factors, mitigation actions, and mode comparison
 
-Everything has been rigorously scaffolded inside `docker-compose`. 
+## Technology
 
-Ensure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed on your machine.
+| Area | Technology |
+| --- | --- |
+| Frontend | React, Vite, Tailwind CSS |
+| Backend | Node.js, Express |
+| Machine learning | Python, FastAPI, scikit-learn, XGBoost, SHAP |
+| AI assessment | OpenAI API |
+| Data | Supabase PostgreSQL |
+| External signals | OpenWeather, NewsAPI |
+| Mapping | MapLibre GL JS, OpenFreeMap |
 
-1. **Clone the repository** and navigate to the project root.
-2. **Configure your Database (Supabase)**
-   - Run the provided `supabase_setup.sql` script located in the codebase against your Supabase SQL Editor to create the `predictions` table structure.
-3. **Configure Environment Variables**
-   - We have provided `.env.example` files in the root and `server/` directory. 
-   - Rename them to `.env` and add your API details (`SUPABASE_URL`, `SUPABASE_ANON_KEY`, `OPENAI_API_KEY`, etc.).
-4. **Boot the Network**
-   Open your terminal and run:
-   ```bash
-   docker compose up --build -d
-   ```
-5. **Access the Agent**
-   - Head over to `http://localhost:5173` to launch the predictive dashboard.
+## Project structure
 
----
+```text
+Freight-Mind/
+|- client/              # React dashboard and landing page
+|- server/              # Express API and orchestration layer
+|- ml-service/          # FastAPI inference service and trained models
+|- supabase_setup.sql   # Database schema
+|- .env.example         # Environment configuration template
+`- image.png            # Product preview used in this README
+```
 
-## Screenshots
+## Getting started
 
-### 1. Predictive Landing Page
-![Landing Page](./docs/screenshot1.png)
+### Prerequisites
 
-### 2. Secure MFA Authentication
-![MFA Security](./docs/screenshot2.png)
+- Node.js 18+
+- Python 3.11+
+- Supabase project
+- API keys for OpenAI, OpenWeather, and NewsAPI
 
-🚀 Built by Team Hardcoders
+### 1. Install dependencies
+
+```bash
+npm install --prefix server
+npm install --prefix client
+python -m venv ml-service/venv
+ml-service/venv/Scripts/pip install -r ml-service/requirements.txt
+```
+
+### 2. Configure services
+
+Copy the environment template and add your credentials:
+
+```bash
+copy .env.example .env
+```
+
+Run `supabase_setup.sql` in the Supabase SQL editor to create the predictions table.
+
+### 3. Start Freight Mind
+
+Open three terminals in the repository root:
+
+```bash
+npm run ml
+npm run server
+npm run client
+```
+
+Open [http://localhost:5173](http://localhost:5173) to use the application.
+
+## Local services
+
+| Service | URL |
+| --- | --- |
+| Freight Mind web app | `http://localhost:5173` |
+| Express API | `http://localhost:5000` |
+| ML inference service | `http://localhost:8001` |
+
