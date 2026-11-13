@@ -25,16 +25,7 @@ export async function predictDelayAsync(query) {
         throw new Error('Session expired. Please log in again.');
     }
     if (!response.ok) throw new Error(`Prediction failed: ${response.statusText}`);
-    return response.json(); // Returns { jobId, statusUrl }
-}
-
-export async function pollJobStatus(jobId) {
-    const headers = await getHeaders();
-    const response = await fetch(`${API_BASE}/job-status/${jobId}`, {
-        headers
-    });
-    if (!response.ok) throw new Error('Failed to fetch status');
-    return response.json();
+    return response.json(); // Returns { traceId, result }
 }
 
 export async function getHistory(limit = 20) {
